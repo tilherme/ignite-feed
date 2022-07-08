@@ -32,10 +32,18 @@ export function Post() {
         <p>
          <a href=""> #novoprojeto</a>{''}
          <a href="">  #nlw </a>{' '}
-         <a href=""> #rocketseat </a>
-         
+         <a href=""> #rocketseat </a>   
         </p>
       </div>
+      <form className={styles.comentForm}>
+        <strong>Deixe seu comentario</strong>
+        <textarea 
+        placeholder="Deixe seu comentario"
+        />
+     <footer>
+     <button type="submit">Publicar</button>
+     </footer>
+      </form>
     </article>
   );
 }
