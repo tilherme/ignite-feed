@@ -1,55 +1,78 @@
+import { format, formatDistanceToNow } from "date-fns";
+import ptBr from "date-fns/locale/pt-BR";
+import { useState } from "react";
+
 import { Avatar } from "./Avatar";
 import { Comment } from "./Comment";
+
 import styles from "./Post.module.css";
-export function Post() {
+
+export function Post({ author, content, published }) {
+  const [comments, setComments] = useState([
+    'Ola mundo',
+  ]);
+  const [newComment, setNewComment] = useState('')
+
+  const publishedDate = format(published, "d 'de' LLLL 'as' HH:mm'h'", {
+    locale: ptBr,
+  });
+
+  const publishedDistance = formatDistanceToNow(published, {
+    locale: ptBr,
+    addSuffix: true,
+  });
+
+  function handleCreateComment() {
+    event.preventDefault();
+
+    // console.log(event.target.comments.value);
+    setComments([...comments, newComment]);
+    setNewComment('')
+  }
+  function handlenNewComment () {
+    setNewComment(event.target.value);
+  }
+
   return (
     <article className={styles.post}>
       <header>
         <div className={styles.author}>
-          <Avatar
-            hasBorder
-            src="https://github.com/diego3g.png"
-          />
+          <Avatar src={author.avatarUrl} />
           <div className={styles.authorInfo}>
-            <strong>Guilherme Mateus</strong>
-            <span>Front-end</span>
+            <strong>{author.name}</strong>
+            <span>{author.role}</span>
           </div>
         </div>
 
-        <time title="06 de Julho as 19:18" dateTime="2022-06-06 19:18:00">
-          {" "}
-          Publicado ha 1h
+        <time title={publishedDate} dateTime={published.toISOString()}>
+          {publishedDistance}
         </time>
       </header>
       <div className={styles.content}>
-        <p> Fala galeraa 👋 </p>
-        <p>
-          Acabei de subir mais um projeto no meu portifa. É um projeto que fiz
-          no NLW Return, evento da Rocketseat. O nome do projeto é DoctorCare 🚀{" "}
-        </p>
-        <p>
-          {" "}
-          <a href=""> jane.design/doctorcare</a>{" "}
-        </p>
-        <p>
-         <a href=""> #novoprojeto</a>{''}
-         <a href="">  #nlw </a>{' '}
-         <a href=""> #rocketseat </a>   
-        </p>
+        {content.map(item => {
+          if (item.type === 'paragraph') {
+            return <p>{item.content}</p>
+          }
+          if (item.type === 'link') {
+            return <a href={item.content}>{item.content}</a>
+          }
+        })}
       </div>
-      <form className={styles.comentForm}>
+      <form onSubmit={handleCreateComment} className={styles.comentForm}>
         <strong>Deixe seu comentario</strong>
-        <textarea 
-        placeholder="Deixe seu comentario"
-        />
-     <footer>
-     <button type="submit">Publicar</button>
-     </footer>
+        <textarea
+         placeholder="Deixe seu comentario"
+        name="comments"
+        value={newComment}
+        onChange={handlenNewComment} />
+        <footer>
+          <button type="submit">Publicar</button>
+        </footer>
       </form>
       <div className={styles.commentList}>
-        <Comment />
-        <Comment />
-        <Comment />
+        {comments.map(item => {
+          return <Comment content={item} />
+        })}
       </div>
     </article>
   );
